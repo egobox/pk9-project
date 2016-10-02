@@ -1,0 +1,59 @@
+- var pageTitle = 'Index - Sliders'
+doctype html
+html(lang="en")
+    include ../layout/_header
+
+    body
+        .container(style='max-width: 980px; width: 100%; margin: 2em auto; text-align: center;')
+            .big-slider(style='background-color: #ddd; position: relative;')
+                #big-slider
+                    div.item
+                        img(src='/img/bag-and-hands.jpg')
+                    div.item
+                        img(src='/img/bw-room.jpeg')
+                    div.item
+                        img(src='/img/mac-glasses.jpeg')
+                    div.item
+                        img(src='/img/road.jpg')
+
+            hr(style='margin: 1.4em 0;')
+
+            .carousel-slider
+                #carousel-slider
+                    div.item
+                        img(src='/img/products/product-1.png')
+                    div.item
+                        img(src='/img/products/product-2.png')
+                    div.item
+                        img(src='/img/products/product-3.png')
+                    div.item
+                        img(src='/img/products/product-4.png')
+                    div.item
+                        img(src='/img/products/product-5.png')
+
+            //button.test-event(data-plugin='item-click') Test Event Button
+
+            hr(style='margin: 1.4em 0;')
+
+            div.col30(style='width: 25%; height: 320px; display: flex;')
+                .carousel-slider-vertical
+                    #carousel-slider-vertical.vertical-view
+                        div.item
+                            img(src='/img/products/product-1.png')
+                        div.item
+                            img(src='/img/products/product-2.png')
+                        div.item
+                            img(src='/img/products/product-3.png')
+                        div.item
+                            img(src='/img/products/product-4.png')
+                        div.item
+                            img(src='/img/products/product-5.png')
+
+
+
+            .pick-slider
+
+
+
+
+    include ../layout/_footer

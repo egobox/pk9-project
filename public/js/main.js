@@ -3,8 +3,7 @@
         infinite: true,
         slidesToShow: 1,
         slidesToScroll: 1,
-        dots: false,
-        adaptiveHeight: true
+        dots: false
     });
 
     $('#carousel-slider').slick({
@@ -52,7 +51,8 @@
                     'dislike'
                 ]
             }
-        };
+        },
+        widgetConfig = null;
 
     // PRIVATE FUNCTIONS
     // Check local storage for user
@@ -104,7 +104,7 @@
     // PUBLIC
     service.init = function (url) {
         var userData = _getInitUserData(),
-            widgetData;
+            widgetList;
 
         // Request to server to get init state params
         if (userData === null) {
@@ -113,19 +113,17 @@
         }
 
         // Get widgets
-        widgetData = service.handlers.getWidgetData();
+        widgetList = $('[data-id]');
+        if (widgetList.length === 0) {
+            console.log('Could not obtain array of widgets');
+        }
 
-        // Render widgets
-        service.render.addWidget(widgetData, function(el) {
-            $('#' + el.id).slick({
-                infinite: true,
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                dots: false,
-                variableWidth: false
-            });
-
-        });
+        if (widgetList.length > 0) {
+            // Get widget config
+            widgetConfig = $.getJSON('../json/config/widget.json');
+            // Render widgets
+            service.render.addWidgets(widgetList);
+        }
 
         // Init event listeners
         service.listeners.add(document.body, 'click', service.listeners.process);
@@ -134,15 +132,39 @@
     };
 
     service.render = {
-        addWidget: function (widgetData, cb) {
-            console.log('{Render} Add Widget');
-            var parentEl = document.querySelector('.' + widgetData.type);
-            var el = document.createElement('div');
-            el.setAttribute('id', widgetData.type);
-            parentEl.appendChild(el);
+        addWidget: function (widget, data, cb) {
+            console.log('{Render} ' + widget.attr('data-id') + ' (Add Widget)');
+            var el = document.createElement('div'),
+                h1 = document.createElement('h1');
 
+            $(h1).text(data.widgetId);
+            el.setAttribute('id', data.widgetId);
+            widget.append(h1).append(el);
 
-            cb(el);
+            cb($(el));
+        },
+        addWidgets: function (widgetList) {
+            widgetList.each(function () {
+                //verticalFlat, bigFlat, multiFlat, flat - slick
+                //popup
+                var widget = $(this);
+
+                console.log(widget);
+
+                //TODO: Uncomment, set url and use for init
+                /*
+                 var url = '';
+                 widgetData = service.utils.post(url, widget.id);
+                 */
+
+                $.getJSON('../json/' + widget.attr('data-id') + '.json', function(data) {
+                    if (data.hasOwnProperty('type')) {
+                        service.render.addWidget(widget, data, function(el) {
+                            el.slick(widgetConfig[data.type]);
+                        });
+                    }
+                });
+            });
         }
     };
 
@@ -153,7 +175,6 @@
             /*
              var url = '';
              userData = service.utils.post(url);
-             userData = JSON.parse(userData);
              */
 
             // TODO: TEMP! Remove when backend API finished
@@ -164,48 +185,6 @@
             };
 
             return userData
-        },
-        getWidgetData: function () {
-            var widgetData;
-            //TODO: Uncomment, set url and use for init
-            /*
-             var url = '';
-             userData = service.utils.post(url);
-             userData = JSON.parse(config);
-             */
-
-            widgetData = {
-                "type": "pick-slider",
-                "itemScores":
-                    [
-                        {
-                            "itemId": "prod20016",
-                            "itemProperties": {
-                                "categories": ["Shirts"],
-                                "displayName": "Plaid Button Down"
-                            },
-                            "score": 4
-                        },
-                        {
-                            "itemId": "prod20004",
-                            "itemProperties": {
-                                "categories": ["Shoes"],
-                                "displayName": "Varsity Trainer"
-                            },
-                            "score": 4
-                        },
-                        {
-                            "itemId": "xprod1044",
-                            "itemProperties": {
-                                "categories": ["Shoes"],
-                                "displayName": "Varsity Trainer"
-                            },
-                            "score": 4
-                        }
-                    ]
-            };
-
-            return widgetData;
         }
     };
 

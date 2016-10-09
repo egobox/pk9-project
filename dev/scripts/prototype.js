@@ -105,12 +105,12 @@
 
     service.render = {
         addWidget: function (widgetData, cb) {
-            console.log('{Render} Add Widget');
-            var parentEl = document.querySelector('.' + widgetData.type);
+            console.log('{Render} '+widgetData.widgetId+' (Add Widget)');
+            var parentEl = document.querySelector('[data-pkplugin="'+widgetData.parentDataName+'"]');
+            var elArr = widgetData.items;
             var el = document.createElement('div');
             el.setAttribute('id', widgetData.type);
             parentEl.appendChild(el);
-
 
             cb(el);
         }
@@ -145,32 +145,65 @@
              */
 
             widgetData = {
-                "type": "pick-slider",
-                "itemScores":
+                "widgetId": "widget123",
+                "type": "flat",
+                "parentDataName": "product-slider-1234",
+                "items":
                     [
                         {
                             "itemId": "prod20016",
                             "itemProperties": {
                                 "categories": ["Shirts"],
-                                "displayName": "Plaid Button Down"
-                            },
-                            "score": 4
+                                "displayName": "Plaid Button Down",
+                                "description": "Description Plaid Button text example",
+                                "rating": 5,
+                                "smallImage": "/img/products/product-1.png",
+                                "bigImage": "/img/products/product-1.png"
+                            }
                         },
                         {
                             "itemId": "prod20004",
                             "itemProperties": {
                                 "categories": ["Shoes"],
-                                "displayName": "Varsity Trainer"
-                            },
-                            "score": 4
+                                "displayName": "Varsity Trainer",
+                                "description": "Description Varsity Trainer text example",
+                                "rating": 4,
+                                "smallImage": "/img/products/product-2.png",
+                                "bigImage": "/img/products/product-2.png"
+                            }
                         },
                         {
-                            "itemId": "xprod1044",
+                            "itemId": "prod1044",
                             "itemProperties": {
                                 "categories": ["Shoes"],
-                                "displayName": "Varsity Trainer"
-                            },
-                            "score": 4
+                                "displayName": "Varsity Trainer",
+                                "description": "Description Varsity Trainer text example",
+                                "rating": 5,
+                                "smallImage": "/img/products/product-3.png",
+                                "bigImage": "/img/products/product-3.png"
+                            }
+                        },
+                        {
+                            "itemId": "prod20344",
+                            "itemProperties": {
+                                "categories": ["Shoes"],
+                                "displayName": "Recent Places",
+                                "description": "Description Recent Places text example",
+                                "rating": 4,
+                                "smallImage": "/img/products/product-4.png",
+                                "bigImage": "/img/products/product-4.png"
+                            }
+                        },
+                        {
+                            "itemId": "prod3477",
+                            "itemProperties": {
+                                "categories": ["Shoes"],
+                                "displayName": "Local Downstream",
+                                "description": "Description Local Downstream text example",
+                                "rating": 5,
+                                "smallImage": "/img/products/product-5.png",
+                                "bigImage": "/img/products/product-5.png"
+                            }
                         }
                     ]
             };

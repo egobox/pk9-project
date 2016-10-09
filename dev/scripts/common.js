@@ -3,8 +3,7 @@
         infinite: true,
         slidesToShow: 1,
         slidesToScroll: 1,
-        dots: false,
-        adaptiveHeight: true
+        dots: false
     });
 
     $('#carousel-slider').slick({

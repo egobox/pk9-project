@@ -22,7 +22,8 @@
                     'dislike'
                 ]
             }
-        };
+        },
+        widgetConfig = null;
 
     // PRIVATE FUNCTIONS
     // Check local storage for user
@@ -74,7 +75,7 @@
     // PUBLIC
     service.init = function (url) {
         var userData = _getInitUserData(),
-            widgetData;
+            widgetList;
 
         // Request to server to get init state params
         if (userData === null) {
@@ -83,19 +84,17 @@
         }
 
         // Get widgets
-        widgetData = service.handlers.getWidgetData();
+        widgetList = $('[data-id]');
+        if (widgetList.length === 0) {
+            console.log('Could not obtain array of widgets');
+        }
 
-        // Render widgets
-        service.render.addWidget(widgetData, function(el) {
-            $('#' + el.id).slick({
-                infinite: true,
-                slidesToShow: 1,
-                slidesToScroll: 1,
-                dots: false,
-                variableWidth: false
-            });
-
-        });
+        if (widgetList.length > 0) {
+            // Get widget config
+            widgetConfig = $.getJSON('../json/config/widget.json');
+            // Render widgets
+            service.render.addWidgets(widgetList);
+        }
 
         // Init event listeners
         service.listeners.add(document.body, 'click', service.listeners.process);
@@ -104,15 +103,39 @@
     };
 
     service.render = {
-        addWidget: function (widgetData, cb) {
-            console.log('{Render} '+widgetData.widgetId+' (Add Widget)');
-            var parentEl = document.querySelector('[data-pkplugin="'+widgetData.parentDataName+'"]');
-            var elArr = widgetData.items;
-            var el = document.createElement('div');
-            el.setAttribute('id', widgetData.type);
-            parentEl.appendChild(el);
+        addWidget: function (widget, data, cb) {
+            console.log('{Render} ' + widget.attr('data-id') + ' (Add Widget)');
+            var el = document.createElement('div'),
+                h1 = document.createElement('h1');
 
-            cb(el);
+            $(h1).text(data.widgetId);
+            el.setAttribute('id', data.widgetId);
+            widget.append(h1).append(el);
+
+            cb($(el));
+        },
+        addWidgets: function (widgetList) {
+            widgetList.each(function () {
+                //verticalFlat, bigFlat, multiFlat, flat - slick
+                //popup
+                var widget = $(this);
+
+                console.log(widget);
+
+                //TODO: Uncomment, set url and use for init
+                /*
+                 var url = '';
+                 widgetData = service.utils.post(url, widget.id);
+                 */
+
+                $.getJSON('../json/' + widget.attr('data-id') + '.json', function(data) {
+                    if (data.hasOwnProperty('type')) {
+                        service.render.addWidget(widget, data, function(el) {
+                            el.slick(widgetConfig[data.type]);
+                        });
+                    }
+                });
+            });
         }
     };
 
@@ -123,7 +146,6 @@
             /*
              var url = '';
              userData = service.utils.post(url);
-             userData = JSON.parse(userData);
              */
 
             // TODO: TEMP! Remove when backend API finished
@@ -134,81 +156,6 @@
             };
 
             return userData
-        },
-        getWidgetData: function () {
-            var widgetData;
-            //TODO: Uncomment, set url and use for init
-            /*
-             var url = '';
-             userData = service.utils.post(url);
-             userData = JSON.parse(config);
-             */
-
-            widgetData = {
-                "widgetId": "widget123",
-                "type": "flat",
-                "parentDataName": "product-slider-1234",
-                "items":
-                    [
-                        {
-                            "itemId": "prod20016",
-                            "itemProperties": {
-                                "categories": ["Shirts"],
-                                "displayName": "Plaid Button Down",
-                                "description": "Description Plaid Button text example",
-                                "rating": 5,
-                                "smallImage": "/img/products/product-1.png",
-                                "bigImage": "/img/products/product-1.png"
-                            }
-                        },
-                        {
-                            "itemId": "prod20004",
-                            "itemProperties": {
-                                "categories": ["Shoes"],
-                                "displayName": "Varsity Trainer",
-                                "description": "Description Varsity Trainer text example",
-                                "rating": 4,
-                                "smallImage": "/img/products/product-2.png",
-                                "bigImage": "/img/products/product-2.png"
-                            }
-                        },
-                        {
-                            "itemId": "prod1044",
-                            "itemProperties": {
-                                "categories": ["Shoes"],
-                                "displayName": "Varsity Trainer",
-                                "description": "Description Varsity Trainer text example",
-                                "rating": 5,
-                                "smallImage": "/img/products/product-3.png",
-                                "bigImage": "/img/products/product-3.png"
-                            }
-                        },
-                        {
-                            "itemId": "prod20344",
-                            "itemProperties": {
-                                "categories": ["Shoes"],
-                                "displayName": "Recent Places",
-                                "description": "Description Recent Places text example",
-                                "rating": 4,
-                                "smallImage": "/img/products/product-4.png",
-                                "bigImage": "/img/products/product-4.png"
-                            }
-                        },
-                        {
-                            "itemId": "prod3477",
-                            "itemProperties": {
-                                "categories": ["Shoes"],
-                                "displayName": "Local Downstream",
-                                "description": "Description Local Downstream text example",
-                                "rating": 5,
-                                "smallImage": "/img/products/product-5.png",
-                                "bigImage": "/img/products/product-5.png"
-                            }
-                        }
-                    ]
-            };
-
-            return widgetData;
         }
     };
 
